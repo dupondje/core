@@ -20,7 +20,7 @@
  *
  */
 
-OC_JSON::callCheck();
+// OC_JSON::callCheck();
 OC_JSON::checkSubAdminUser();
 if (isset($_GET['pattern']) && !empty($_GET['pattern'])) {
 	$pattern = $_GET['pattern'];
