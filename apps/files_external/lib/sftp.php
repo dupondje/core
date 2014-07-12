@@ -17,7 +17,16 @@ class SFTP extends \OC\Files\Storage\Common {
 	private $password;
 	private $root;
 
+	/**
+	* @var \Net_SFTP
+	*/
 	private $client;
+
+	/**
+	* Pseudo-hostname for use by Net_SFTP_Stream.
+	* @var string
+	*/
+	private $pseudoHostname;
 
 	private static $tempFiles = array();
 
@@ -68,6 +77,12 @@ class SFTP extends \OC\Files\Storage\Common {
 		if (!$this->client->login($this->user, $this->password)) {
 			throw new \Exception('Login failed');
 		}
+
+		// Hack for making the Net_SFTP object we just created available to
+		// Net_SFTP_Stream. Net_SFTP_Stream expects a logged-in SFTP object.
+		$pseudoHostnameVarName = 'ocPhpseclibSftpObj' . md5($this->host . $this->user . microtime());
+		$GLOBALS[$pseudoHostnameVarName] = $this->client;
+		$this->pseudoHostname = '$' . $pseudoHostnameVarName;
 	}
 
 	public function test() {
@@ -294,7 +309,7 @@ class SFTP extends \OC\Files\Storage\Common {
 	 * @param string $path
 	 */
 	public function constructUrl($path) {
-		$url = 'sftp://'.$this->user.':'.$this->password.'@'.$this->host.$this->root.$path;
+		$url = 'sftp://'.$this->pseudoHostname.$this->root.$path;
 		return $url;
 	}
 }
