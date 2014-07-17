@@ -192,6 +192,12 @@ table th.column-last, table td.column-last {
 	max-width: 176px;
 }
 
+/* needed else IE8 will randomly hide the borders... */
+.ie8 table th#headerDate, table td.date,
+.ie8 table th.column-last, table td.column-last {
+	position: static;
+}
+
 /* Multiselect bar */
 #filestable.multiselect {
 	top: 95px;
